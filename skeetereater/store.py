@@ -32,7 +32,13 @@ class Store():
         'VALUES (%s, %s, %s, %s)'
     )
 
-    def __init__(self, dsn,
+    def __init__(self,
+                 db_host=None,
+                 db_port=None,
+                 db_user=None,
+                 db_pass=None,
+                 db_name=None,
+                 maint_db_name='postgres',
                  template_table=None,
                  table_name_format=None):
 
@@ -44,7 +50,17 @@ class Store():
 
         self.template_table = template_table
         self.table_name_format = table_name_format
-        self.dsn = dsn
+
+        dsn = dict(
+            host=db_host,
+            port=db_port,
+            user=db_user,
+            password=db_pass,
+            dbname=db_name,
+        )
+
+        self.dsn = {k: v for k, v in dsn.items()
+                    if v is not None}
 
         self._connect()
 
@@ -52,7 +68,7 @@ class Store():
         LOG.debug('connecting to database')
         while True:
             try:
-                self.conn = psycopg2.connect(self.dsn)
+                self.conn = psycopg2.connect(**self.dsn)
                 break
             except psycopg2.OperationalError as err:
                 LOG.error('failed to connecto to server: %s', err)

@@ -84,20 +84,6 @@ def parse_args():
     return args
 
 
-def make_pg_dsn(args):
-    args_to_dsn = {
-        'db_name': 'dbname',
-        'db_host': 'host',
-        'db_port': 'port',
-        'db_user': 'user',
-        'db_pass': 'password',
-    }
-
-    return ' '.join('{}={}'.format(v, getattr(args, k))
-                    for k, v in args_to_dsn.items()
-                    if getattr(args, k) is not None)
-
-
 def main():
     args = parse_args()
 
@@ -111,7 +97,9 @@ def main():
 
     logging.basicConfig(level=args.loglevel)
 
-    store = Store(make_pg_dsn(args),
+    store = Store(db_host=args.db_host, db_port=args.db_port,
+                  db_user=args.db_user, db_pass=args.db_pass,
+                  db_name=args.db_name,
                   template_table=args.template_table,
                   table_name_format=args.table_name_format)
 
