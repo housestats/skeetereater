@@ -88,14 +88,14 @@ class Collect():
         self.broker.on_message = self.on_message
 
     def start(self):
-        LOG.debug('connecting to broker')
+        LOG.debug('connecting to mqtt broker')
         self.broker.connect(self.mqtt_host, self.mqtt_port)
         self.broker.loop_forever()
 
     def on_connect(self, client, userdata, flags, rc):
         LOG.info('connected to mqtt broker')
         for t in self.topics:
-            LOG.debug('subscribing to %s', t)
+            LOG.info('subscribing to %s', t)
             self.broker.subscribe(t)
 
         LOG.debug('starting flush thread')

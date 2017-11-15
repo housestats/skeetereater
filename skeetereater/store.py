@@ -69,6 +69,7 @@ class Store():
         while True:
             try:
                 self.conn = psycopg2.connect(**self.dsn)
+                LOG.info('connected to database')
                 break
             except psycopg2.OperationalError as err:
                 LOG.error('failed to connecto to server: %s', err)
@@ -94,7 +95,7 @@ class Store():
                         dict(tablename=tablename))
 
     def _store_messages(self, messages):
-        LOG.info('storing %d messages', len(messages))
+        LOG.debug('storing %d messages', len(messages))
         tables = {}
 
         for message in messages:
