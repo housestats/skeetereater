@@ -55,10 +55,10 @@ def parse_args():
     g.add_argument('--flush-size',
                    type=int,
                    default=os.environ.get('SKEETER_FLUSH_SIZE'))
-    g.add_argument('--topic', '-t',
+    g.add_argument('--topics', '-t',
                    action='append',
                    default=default_topic)
-    p.add_argument('--tag-key', '-k',
+    p.add_argument('--tag-keys', '-k',
                    action='append',
                    default=default_tag_key)
 
@@ -73,7 +73,15 @@ def parse_args():
                    dest='loglevel')
 
     p.set_defaults(loglevel='WARNING')
-    return p.parse_args()
+    args = p.parse_args()
+
+    if args.topics is not None:
+        args.topics = list(chain(*[x.split(',') for x in args.topics]))
+
+    if args.tag_keys is not None:
+        args.tag_keys = list(chain(*[x.split(',') for x in args.tag_keys]))
+
+    return args
 
 
 def make_pg_dsn(args):
@@ -111,9 +119,9 @@ def main():
         mqtt_host=args.mqtt_host,
         mqtt_port=args.mqtt_port,
         clientid=args.mqtt_client_id,
-        topics=args.topic,
+        topics=args.topics,
         flushfunc=store.store_messages,
-        tag_keys=args.tag_key,
+        tag_keys=args.tag_keys,
     )
 
     collect.start()
