@@ -3,11 +3,23 @@ import json
 import logging
 import os
 
+from itertools import chain
+
 from skeetereater.collect import Collect
 from skeetereater.store import Store
 
 
 def parse_args():
+    if 'SKEETER_TAG_KEYS' in os.environ:
+        default_tag_key = os.environ['SKEETER_TAG_KEYS'].split(',')
+    else:
+        default_tag_key = None
+
+    if 'SKEETER_TOPICS' in os.environ:
+        default_topic = os.environ['SKEETER_TOPICS'].split(',')
+    else:
+        default_topic = None
+
     p = argparse.ArgumentParser()
     p.add_argument('--config', '-f')
 
@@ -44,9 +56,11 @@ def parse_args():
                    type=int,
                    default=os.environ.get('SKEETER_FLUSH_SIZE'))
     g.add_argument('--topic', '-t',
-                   action='append')
+                   action='append',
+                   default=default_topic)
     p.add_argument('--tag-key', '-k',
-                   action='append')
+                   action='append',
+                   default=default_tag_key)
 
     g = p.add_argument_group('Logging options')
     g.add_argument('--verbose', '-v',
@@ -59,7 +73,6 @@ def parse_args():
                    dest='loglevel')
 
     p.set_defaults(loglevel='WARNING')
-
     return p.parse_args()
 
 
