@@ -1,6 +1,7 @@
 import argparse
 import json
 import logging
+import os
 
 from skeetereater.collect import Collect
 from skeetereater.store import Store
@@ -11,25 +12,37 @@ def parse_args():
     p.add_argument('--config', '-f')
 
     g = p.add_argument_group('Database options')
-    g.add_argument('--db-host')
+    g.add_argument('--db-host',
+                   default=os.environ.get('SKEETER_DB_HOST'))
     g.add_argument('--db-port',
-                   type=int)
-    g.add_argument('--db-user')
-    g.add_argument('--db-pass')
-    g.add_argument('--db-name')
+                   type=int,
+                   default=os.environ.get('SKEETER_DB_PORT'))
+    g.add_argument('--db-user',
+                   default=os.environ.get('SKEETER_DB_USER'))
+    g.add_argument('--db-pass',
+                   default=os.environ.get('SKEETER_DB_PASS'))
+    g.add_argument('--db-name',
+                   default=os.environ.get('SKEETER_DB_NAME'))
     g.add_argument('--template-table',
-                   default='mqtt_template')
-    g.add_argument('--table-name-format')
+                   default=os.environ.get('SKEEPTER_TEMPLATE_TABLE',
+                                          'mqtt_template')),
+    g.add_argument('--table-name-format',
+                   default=os.environ.get('SKEETER_TABLE_NAME_FORMAT'))
 
     g = p.add_argument_group('MQTT options')
-    g.add_argument('--mqtt-host')
+    g.add_argument('--mqtt-host',
+                   default=os.environ.get('SKEETER_MQTT_HOST'))
     g.add_argument('--mqtt-port',
-                   type=int)
-    g.add_argument('--mqtt-client-id')
+                   type=int,
+                   default=os.environ.get('SKEETER_MQTT_PORT'))
+    g.add_argument('--mqtt-client-id',
+                   default=os.environ.get('SKEETER_MQTT_CLIENT_ID'))
     g.add_argument('--flush-interval',
-                   type=float)
+                   type=float,
+                   default=os.environ.get('SKEETER_FLUSH_INTERVAL'))
     g.add_argument('--flush-size',
-                   type=int)
+                   type=int,
+                   default=os.environ.get('SKEETER_FLUSH_SIZE'))
     g.add_argument('--topic', '-t',
                    action='append')
     p.add_argument('--tag-key', '-k',
