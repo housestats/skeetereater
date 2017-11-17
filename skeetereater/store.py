@@ -101,7 +101,11 @@ class Store():
         for message in messages:
             measured_at, topic, tags, fields = message
 
-            tablename = self.table_name_format.format(topic=topic, **tags)
+            try:
+                tablename = self.table_name_format.format(topic=topic, **tags)
+            except Exception as err:
+                LOG.error('failed to set table name: %s', err)
+                tablename = self.default_table_name
             if tablename not in tables:
                 tables[tablename] = []
 
