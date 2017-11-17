@@ -123,6 +123,7 @@ class Collect():
 
     def on_message(self, broker, userdata, msg):
         LOG.debug('received message on topic %s', msg.topic)
+        LOG.debug(msg.payload)
         with self.lock:
             self.buffer.append(self.prepare_message(msg))
             self.buflen += 1
